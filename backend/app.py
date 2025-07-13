@@ -3,9 +3,13 @@ from supabase import create_client, Client
 from flask_cors import CORS
 
 
-SUPABASE_URL = "https://ucdwkpzzqfrhxrxmyulq.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVjZHdrcHp6cWZyaHhyeG15dWxxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE5NDk4OTAsImV4cCI6MjA2NzUyNTg5MH0.Ww7dRHVCFr0VL_KeHR3jXQwU6W7OEoYUeBujQktUv9w"
+from dotenv import load_dotenv
+import os
 
+load_dotenv()  # load from .env
+
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 app = Flask(__name__)
@@ -28,10 +32,11 @@ def get_tasks():
 @app.route("/tasks", methods=["POST"])
 def add_task():
     data = request.get_json()
-    print("📦 Received data from frontend:", data)  # <-- this will print in terminal
-    response = supabase.table("tasks").insert({"text": data["text"]}).execute()
-    print("✅ Insert result:", response.data)  # <-- did it actually save?
+    print("📦 Received data from frontend:", data)
+    response = supabase.table("tasks").insert({"title": data["title"]}).execute()
+    print("✅ Insert result:", response.data)
     return jsonify(response.data[0]), 201
+
 
 
 
